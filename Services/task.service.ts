@@ -1,10 +1,11 @@
 import { Injectable, inject } from "@angular/core";
 import { HttpClient, HttpHeaders, HttpErrorResponse, HttpParams, HttpEventType } from '@angular/common/http';
 import { Task } from "../Model/Task";
-import { map, catchError, tap, take, exhaustMap } from 'rxjs/operators';
+import { map, catchError, tap } from 'rxjs/operators';
 import { Subject, throwError } from 'rxjs';
 import { LoggingService } from "./Logging.Service";
 import { AuthService } from "./auth.service";
+import { environment } from "../../environments/environment.development";
 
 @Injectable({
     providedIn: 'root'
@@ -14,11 +15,12 @@ export class TaskService {
     loggingService: LoggingService = inject(LoggingService);
     errorSubject = new Subject<HttpErrorResponse>();
     authService: AuthService = inject(AuthService);
+    baseUrl:string=environment.baseUrl
 
     CreateTask(task: Task) {
         const headers = new HttpHeaders({ 'my-header': 'hello-world' })
         this.http.post<{ name: string }>(
-            'https://simple-angular-project-3622c-default-rtdb.firebaseio.com/tasks.json',
+            `${this.baseUrl}/tasks.json`,
             task, { headers: headers }
         )
             .pipe(catchError((err) => {
@@ -35,7 +37,7 @@ export class TaskService {
     }
 
     DeleteTask(id: string | undefined) {
-        this.http.delete('https://simple-angular-project-3622c-default-rtdb.firebaseio.com/tasks/' + id + '.json')
+        this.http.delete(`${this.baseUrl}/tasks/` + id + '.json')
             .pipe(catchError((err) => {
                 //Write the logic to log errors
                 const errorObj = { statusCode: err.status, errorMessage: err.message, datetime: new Date() }
@@ -50,7 +52,7 @@ export class TaskService {
     }
 
     DeleteAllTasks() {
-        this.http.delete('https://simple-angular-project-3622c-default-rtdb.firebaseio.com/tasks.json', { observe: 'events', responseType: 'json' })
+        this.http.delete(`${this.baseUrl}/tasks.json`, { observe: 'events', responseType: 'json' })
             .pipe(tap((event) => {
                 console.log(event);
                 if (event.type === HttpEventType.Sent) {
@@ -70,7 +72,7 @@ export class TaskService {
     }
 
     GetAlltasks() {
-        return this.http.get('https://simple-angular-project-3622c-default-rtdb.firebaseio.com/tasks.json').pipe(map((response) => {
+        return this.http.get(`${this.baseUrl}/tasks.json`).pipe(map((response) => {
             //TRANSFORM DATA
             let tasks = [];
             console.log(response);
@@ -90,7 +92,7 @@ export class TaskService {
     }
 
     UpdateTask(id: string | undefined, data: Task) {
-        this.http.put('https://simple-angular-project-3622c-default-rtdb.firebaseio.com/tasks/' + id + '.json', data)
+        this.http.put(`${this.baseUrl}/tasks/` + id + '.json', data)
             .pipe(catchError((err) => {
                 //Write the logic to log errors
                 const errorObj = { statusCode: err.status, errorMessage: err.message, datetime: new Date() }
@@ -105,7 +107,7 @@ export class TaskService {
     }
 
     getTaskDetails(id: string | undefined) {
-        return this.http.get('https://simple-angular-project-3622c-default-rtdb.firebaseio.com/tasks/' + id + '.json')
+        return this.http.get(`${this.baseUrl}/tasks/` + id + '.json')
             .pipe(map((response) => {
                 console.log(response)
                 let task = {};

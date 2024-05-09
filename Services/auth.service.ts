@@ -5,6 +5,7 @@ import { BehaviorSubject, Subject, catchError, throwError } from "rxjs";
 import { User } from "../Model/User";
 import { tap } from 'rxjs/operators';
 import { Router } from "@angular/router";
+import { environment } from "../../environments/environment.development";
 
 @Injectable({
     providedIn: 'root'
@@ -15,7 +16,7 @@ export class AuthService{
     router: Router = inject(Router);
     private tokenExpireTimer: any;
 
-    apiKey:string="AIzaSyAAWuvWfHpiU4GJE8_ot3p09hX7h0aAjHs"
+    apiKey:string=environment.firebaseApiKey
 
     signup(email, password){
         const data = {email: email, password: password, returnSecureToken: true};

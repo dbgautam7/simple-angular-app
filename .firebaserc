@@ -1,0 +1,9 @@
+{
+  "projects": {
+    "default": "simple-angular-project-3622c",
+    "production": "simple-angular-project-3622c"
+  },
+  "targets": {},
+  "etags": {},
+  "dataconnectEmulatorConfig": {}
+}
